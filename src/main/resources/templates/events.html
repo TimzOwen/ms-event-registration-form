@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Available Events - Safaricom UI</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            color: #0A4A19; /* Safaricom green */
+            font-size: 28px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        th, td {
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+            text-align: left;
+        }
+
+        th {
+            background-color: #0A4A19; /* Safaricom green */
+            color: #fff;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        button {
+            background-color: #0A4A19; /* Safaricom green */
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #006400;
+        }
+
+        .fixed-event {
+            background-color: #e0e0e0;
+        }
+
+        /* Form Styles */
+        .registration-form {
+            display: none; /* Hidden by default */
+            margin-top: 20px;
+        }
+
+        .form-field {
+            margin-bottom: 10px;
+        }
+
+        .form-field input {
+            padding: 10px;
+            width: 100%;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed; /* Stay in place */
+            z-index: 1; /* Sit on top */
+            left: 0;
+            top: 0;
+            width: 100%; /* Full width */
+            height: 100%; /* Full height */
+            overflow: auto; /* Enable scroll if needed */
+            background-color: rgb(0, 0, 0); /* Fallback color */
+            background-color: rgba(0, 0, 0, 0.4); /* Black w/ opacity */
+            padding-top: 60px;
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto; /* 15% from the top and centered */
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%; /* Could be more or less, depending on screen size */
+            text-align: center;
+            border-radius: 10px;
+        }
+
+        .modal-content h3 {
+            color: #0A4A19; /* Safaricom green */
+        }
+
+        .modal-content .tick-icon {
+            font-size: 48px;
+            color: #0A4A19; /* Safaricom green */
+            margin-bottom: 10px;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Available Events</h2>
+
+    <table>
+        <thead>
+        <tr>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Date</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <!-- Dummy Event (non-modifiable) -->
+        <tr class="fixed-event">
+            <td>Safaricom Marathon</td>
+            <td>Join us for the Safaricom Marathon in Kisumu.</td>
+            <td>2024-10-15</td>
+            <td>
+                <button onclick="showRegistrationForm('Safaricom Marathon')">Register</button>
+            </td>
+        </tr>
+
+        <!-- Dynamic Events -->
+        <tr th:each="event : ${events}">
+            <td th:text="${event.name}"></td>
+            <td th:text="${event.description}"></td>
+            <td th:text="${event.date}"></td>
+            <td>
+                <button onclick="showRegistrationForm('${event.id}')">Register</button>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <!-- User Registration Form -->
+    <div class="registration-form" id="registrationForm">
+        <h3>Register for Event</h3>
+        <form id="userRegistration" onsubmit="handleRegistration(event);">
+            <div class="form-field">
+                <label for="name">Your Name</label>
+                <input type="text" id="name" name="name" placeholder="Your Name" required />
+            </div>
+            <div class="form-field">
+                <label for="id">Your ID</label>
+                <input type="text" id="id" name="id" placeholder="Your ID" required />
+            </div>
+            <input type="hidden" name="eventId" id="eventId" />
+            <button type="submit">Submit</button>
+        </form>
+    </div>
+
+    <!-- Success Modal -->
+    <div id="successModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <div class="tick-icon">✔️</div>
+            <h3>Registration Successful!</h3>
+            <p>Your registration for the event has been completed successfully.</p>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Show the registration form
+    function showRegistrationForm(eventId) {
+        document.getElementById("eventId").value = eventId; // Set the event ID in the hidden input
+        document.getElementById("registrationForm").style.display = "block"; // Show the registration form
+    }
+
+    // Handle form submission
+    function handleRegistration(event) {
+        event.preventDefault(); // Prevent the form from submitting
+        // You can process the form data here (e.g., send it to the server)
+
+        // For demonstration, just show the success modal
+        document.getElementById("successModal").style.display = "block";
+
+        // Reset and hide the form
+        document.getElementById("userRegistration").reset();
+        document.getElementById("registrationForm").style.display = "none"; // Hide the form
+    }
+
+    // Close the modal
+    function closeModal() {
+        document.getElementById("successModal").style.display = "none";
+    }
+
+    // Close the modal when clicking outside of the modal
+    window.onclick = function(event) {
+        var modal = document.getElementById("successModal");
+        if (event.target === modal) {
+            modal.style.display = "none";
+        }
+    };
+</script>
+
+</body>
+</html>
