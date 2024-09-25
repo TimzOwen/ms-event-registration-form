@@ -1,76 +1,204 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register for Event</title>
+    <title>Decode 3.0 - Event Registration</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #f5f5f5;
-            color: #333;
-            max-width: 600px;
-            margin: 50px auto;
-            padding: 20px;
-            background-color: #ffffff;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 0;
         }
 
-        h3 {
-            color: #0A4A19; /* Safaricom green */
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .header {
             text-align: center;
+            color: #008c4a; /* Safaricom Green */
             margin-bottom: 20px;
         }
 
-        .form-field {
-            margin-bottom: 10px;
+        .header h1 {
+            font-size: 28px;
         }
 
-        .form-field input {
-            padding: 10px;
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #333;
+        }
+
+        .form-group input, .form-group select {
             width: 100%;
+            padding: 10px;
             border: 1px solid #ccc;
-            border-radius: 5px;
+            border-radius: 4px;
         }
 
-        button {
-            background-color: #0A4A19; /* Safaricom green */
+        .form-group input:focus, .form-group select:focus {
+            border-color: #008c4a;
+            outline: none;
+        }
+
+        .submit-btn {
+            background-color: #008c4a; /* Safaricom Green */
             color: white;
             padding: 10px 20px;
             border: none;
-            border-radius: 5px;
+            border-radius: 4px;
             cursor: pointer;
+            font-size: 16px;
             display: block;
             width: 100%;
+            margin-top: 20px;
         }
 
-        button:hover {
-            background-color: #006400;
+        .submit-btn:hover {
+            background-color: #005f2e;
         }
+
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 12px;
+            color: #555;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: #fff;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 300px;
+            text-align: center;
+            border-radius: 8px;
+        }
+
+        .modal-content h2 {
+            color: #008c4a;
+        }
+
+        .modal-content .tick {
+            font-size: 60px;
+            color: #008c4a;
+        }
+
+        .close-btn {
+            background-color: #008c4a;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
     </style>
 </head>
 <body>
 
-<h3>Register for Event</h3>
-<form id="userRegistration" action="submit_registration" method="POST">
-    <div class="form-field">
-        <label for="name">Your Name</label>
-        <input type="text" id="name" name="name" placeholder="Your Name" required />
+<div class="container">
+    <div class="header">
+        <h1>Decode 3.0</h1>
+        <p>Event Registration</p>
     </div>
-    <div class="form-field">
-        <label for="id">Your ID</label>
-        <input type="text" id="id" name="id" placeholder="Your ID" required />
+
+    <form id="registrationForm" th:action="@{/register}" method="post">
+        <!-- Name Field -->
+        <div class="form-group">
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="name" placeholder="Enter your full name" required>
+        </div>
+
+        <!-- Institution Field -->
+        <div class="form-group">
+            <label for="institution">Institution:</label>
+            <input type="text" id="institution" name="institution" placeholder="Enter your institution" required>
+        </div>
+
+        <!-- Course Field -->
+        <div class="form-group">
+            <label for="course">Course:</label>
+            <input type="text" id="course" name="course" placeholder="Enter your course of study" required>
+        </div>
+
+        <!-- Year Field -->
+        <div class="form-group">
+            <label for="year">Year of Study:</label>
+            <select id="year" name="year" required>
+                <option value="" disabled selected>Select year of study</option>
+                <option value="1">1st Year</option>
+                <option value="2">2nd Year</option>
+                <option value="3">3rd Year</option>
+                <option value="4">4th Year</option>
+                <option value="5">5th Year</option>
+            </select>
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit" class="submit-btn">Register Now</button>
+    </form>
+
+    <div class="footer">
+        <p>Powered by Safaricom</p>
     </div>
-    <input type="hidden" name="eventId" id="eventId" value="" />
-    <button type="submit">Submit</button>
-</form>
+</div>
+
+<!-- Modal -->
+<div id="successModal" class="modal">
+    <div class="modal-content">
+        <span class="tick">✔</span>
+        <h2>Registration Successful!</h2>
+        <p>You have successfully registered for Decode 3.0.</p>
+        <button class="close-btn" onclick="closeModal()">Close</button>
+    </div>
+</div>
 
 <script>
-    // Get URL parameters to set event ID
-    const urlParams = new URLSearchParams(window.location.search);
-    document.getElementById("eventId").value = urlParams.get('eventId');
-</script>
+    // Modal handling
+    const modal = document.getElementById("successModal");
 
+    function showModal() {
+        modal.style.display = "flex";
+    }
+
+    function closeModal() {
+        modal.style.display = "none";
+    }
+
+    // Event listener to show modal on form submission
+    document.getElementById("registrationForm").addEventListener("submit", function(event){
+        event.preventDefault(); // Prevent form submission
+        showModal(); // Show the success modal
+    });
+</script>
 </body>
 </html>
